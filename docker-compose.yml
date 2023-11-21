@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  entorno:
+    image: steven58380/php7_node18:v1
+    ports:
+      - "8000:8000"
+      - "4200:4200"
+    networks:
+      - internal_net
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=academiapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - internal_net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "postgres"
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - internal_net
+
+volumes:
+  db-data:
+  pgadmin-data:
+
+networks:
+  internal_net:
+    driver: bridge
